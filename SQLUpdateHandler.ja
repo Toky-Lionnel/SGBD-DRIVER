@@ -1,0 +1,105 @@
+import java.util.*;
+
+public class SQLUpdateHandler {
+
+    // Méthode pour analyser une commande UPDATE
+    public static Map<String, Object> parseUpdateCommand(String sqlCommand) {
+        Map<String, Object> parsedUpdate = new HashMap<>();
+
+        // Vérifier que la commande commence par UPDATE
+        sqlCommand = sqlCommand.trim();
+        if (!sqlCommand.toUpperCase().startsWith("UPDATE")) {
+            throw new IllegalArgumentException("La commande SQL n'est pas valide pour une mise à jour.");
+        }
+
+        // Extraire le nom de la table
+        String[] parts = sqlCommand.split("SET", 2);
+        if (parts.length < 2) {
+            throw new IllegalArgumentException("Commande SQL invalide. Format attendu : UPDATE table_name SET col=val WHERE condition.");
+        }
+
+        String tableAndColumns = parts[0].trim();
+        String tableName = tableAndColumns.split(" ")[1];
+        parsedUpdate.put("table_name", tableName);
+
+        // Extraire les colonnes et les valeurs
+        String[] setAndWhere = parts[1].split("WHERE", 2);
+        String[] columnAssignments = setAndWhere[0].split(",");
+
+        Map<String, String> updates = new HashMap<>();
+        for (String assignment : columnAssignments) {
+            String[] keyValue = assignment.split("=");
+            if (keyValue.length != 2) {
+                throw new IllegalArgumentException("Erreur dans la section SET : " + assignment);
+            }
+            updates.put(keyValue[0].trim(), keyValue[1].trim());
+        }
+        parsedUpdate.put("updates", updates);
+
+        // Extraire les conditions
+        if (setAndWhere.length > 1) {
+            parsedUpdate.put("condition", setAndWhere[1].trim());
+        } else {
+            parsedUpdate.put("condition", "");
+        }
+
+        return parsedUpdate;
+    }
+
+    // Méthode pour exécuter une commande UPDATE
+    public static void executeUpdate(Map<String, Object> parsedUpdate, String filePath) throws Exception {
+        String tableName = (String) parsedUpdate.get("table_name");
+        Map<String, String> updates = (Map<String, String>) parsedUpdate.get("updates");
+        String condition = (String) parsedUpdate.get("condition");
+
+        File inputFile = new File(filePath);
+        File tempFile = new File(filePath + ".tmp");
+
+        String[] conditionParts = condition.split("=");
+        int conditionIndex = 0; // Colonne conditionnelle par défaut (par exemple, id)
+        String conditionValue = conditionParts.length == 2 ? conditionParts[1].trim() : "";
+
+        try (
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))
+        ) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                String[] columns = line.split(",");
+
+                // Vérifie si la ligne satisfait la condition
+                if (!condition.isEmpty() && columns.length > conditionIndex && !columns[conditionIndex].trim().equals(conditionValue)) {
+                    writer.write(line);
+                } else {
+                    // Modifier la ligne en fonction des colonnes
+                    for (Map.Entry<String, String> update : updates.entrySet()) {
+                        int updateIndex = Integer.parseInt(update.getKey().replaceAll("[^0-9]", "")) - 1;
+                        if (updateIndex < columns.length) {
+                            columns[updateIndex] = update.getValue();
+                        }
+                    }
+                    writer.write(String.join(",", columns));
+                }
+                writer.newLine();
+            }
+        }
+
+        if (!tempFile.renameTo(inputFile)) {
+            throw new IOException("Erreur lors de la mise à jour du fichier.");
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            String sqlCommand = "UPDATE Etudiant SET NOM='Maths', AGE=20 WHERE ID=3";
+
+            Map<String, Object> parsedUpdate = parseUpdateCommand(sqlCommand);
+            executeUpdate(parsedUpdate, "etudiant.txt");
+
+            System.out.println("Mise à jour effectuée avec succès.");
+        } catch (Exception e) {
+            System.err.println("Erreur : " + e.getMessage());
+        }
+    }
+}

@@ -1,0 +1,31 @@
+(OK) Attribut + Nom de table non sensible à la casse
+(OK) Affichage tableau dynamique
+(OK) Affichage des erreurs (printStackTrace()) -> côté serveur
+(OK) Affichage des erreurs (getMessage()) -> côté client 
+(OK) Affichage des resultats côté client 
+(OK) Problème : tsy mandeha ilay resaka domaine 
+(OK) Si il n'y a pas de données , mettre Empty set
+
+
+Etapes suivantes : 
+	- CREATE DATABASE -> création de dossier  
+	- USE DATABASE -> changement de dossier 
+	- ALTER TABLE 
+	- UPDATE TABLE 
+	- DELETE 
+	- JOINTURE
+	- ORDER BY 
+	- GROUP BY 
+	- SUM / MIN / AVG
+	- Sous-requete 
+	- Creation Fichier log pour la base (facult)
+	- Creation Driver
+	
+		
+- Si le dossier n'existe pas -> throws Exception
+
+
+Fonctionnalités tsy ho atao :
+	- PRIMARY KEY && FOREIGN KEY (facult)
+	- AUTO_INCREMENT ET SEQUENCE 
+	
