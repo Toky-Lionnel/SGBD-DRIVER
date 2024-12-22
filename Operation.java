@@ -176,23 +176,22 @@ public class Operation
     }
 
 
-    public static Object transformObject(String valeur) 
-    {
-        // Tentative de conversion en Integer
+    public static Object transformObject(String valeur) {
+
+        if (valeur != null) {
+            valeur = valeur.trim().replace("'", "").replace("\"", "");
+        }
+        
         try {
             return Integer.valueOf(valeur);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NumberFormatException e) {
         }
-    
-        // Tentative de conversion en Double
+        
         try {
             return Double.valueOf(valeur);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NumberFormatException e) {
         }
-    
-        // Si aucune conversion ne fonctionne, retourne la chaîne elle-même
+        
         return valeur;
     }
     

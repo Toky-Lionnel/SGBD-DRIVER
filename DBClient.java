@@ -32,7 +32,6 @@ public class DBClient {
                 // Envoyer la commande au serveur
                 out.println(sqlCommand);
 
-                    // Lire et afficher la réponse complète
                 StringBuilder serverResponse = new StringBuilder();
                 String line;
                 while ((line = in.readLine()) != null && !"END_OF_RESPONSE".equals(line)) {

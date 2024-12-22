@@ -113,39 +113,6 @@ public class Relation
     
         return result.toString();
     }
-    
-    
-    
-    public void printElements() {
-        //System.out.println("Relation : " + this.nom_relation);
-
-        //System.out.println("Attributs :");
-        System.out.println();
-        if (this.att != null) {
-            String att = "[";
-            for (Attribut attr : this.att) {
-                att += attr.getNom_attribut() + "  ";
-            }
-            att = att.substring(0, att.length() - 2);
-            att += "]";
-            System.out.println(att);
-        } else {
-            System.out.println("Relation vide");
-        }
-
-        System.out.println();
-        if (this.nupl != null) {
-            for (Nuplets nuplet : this.nupl) {
-
-                System.out.println(nuplet.getValeurs());
-            }
-        } else {
-            System.out.println("Valeurs vide");
-        }
-
-        System.out.println();
-    }
-
 
     public ArrayList <String> getAttributs_relations ()
     {

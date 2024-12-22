@@ -1,7 +1,11 @@
 package function;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +48,124 @@ public class Function {
         }
         return null;
     }
+
+
+    public static void modifyLastLine(String filePath, String newLastLine) throws Exception {
+        List<String> lines = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        } catch (IOException e) {
+            System.err.println("Erreur lors de la lecture du fichier : " + e.getMessage());
+        }
+
+        
+        if (!lines.isEmpty()) {
+            lines.set(lines.size() - 1,"PATH : " +newLastLine); 
+        } else {
+            System.out.println("Le fichier est vide. Ajout de la ligne PATH.");
+            lines.add(newLastLine); 
+        }
+
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (String line : lines) {
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Erreur lors de l'écriture du fichier : " + e.getMessage());
+        }
+    }
+
+
+    public static void deleteDirectory(File directory) throws IOException 
+    {
+        if (directory.isDirectory()) {
+            File[] files = directory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    deleteDirectory(file);
+                }
+            }
+        }
+        if (!directory.delete()) {
+            throw new IOException("Échec de la suppression du fichier ou dossier : " + directory.getAbsolutePath());
+        }
+    }
+
+
+    public static List<String> extractHeadersFromString(String relationString) {
+        List<String> headers = new ArrayList<>();
+        String[] lines = relationString.split("\n");
+        
+        // La deuxième ligne contient les en-têtes
+        if (lines.length >= 2) {
+            String headerLine = lines[1];
+            String[] rawHeaders = headerLine.split("\\|");
+            for (String header : rawHeaders) {
+                header = header.trim();
+                if (!header.isEmpty()) {
+                    headers.add(header);
+                }
+            }
+        }
+        return headers;
+    }
+
+
+    public static String readMultiLineResponse(BufferedReader in) throws IOException {
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = in.readLine()) != null) {
+            if ("END_OF_RESPONSE".equals(line)) {
+                break; // Fin de la réponse détectée
+            }
+            response.append(line).append("\n");
+        }
+        return response.toString().trim(); // Supprime les espaces inutiles
+    }
+    
+
+
+    public static List<List<Object>> extractDataFromString(String relationString) {
+        List<List<Object>> data = new ArrayList<>();
+        String[] lines = relationString.split("\n");
+        
+        // Les données commencent après la troisième ligne
+        for (int i = 3; i < lines.length - 1; i++) {
+            String rowLine = lines[i];
+            String[] rawValues = rowLine.split("\\|");
+            List<Object> row = new ArrayList<>();
+            for (String value : rawValues) {
+                value = value.trim();
+                if (!value.isEmpty()) {
+                    // Conversion automatique si nécessaire
+                    row.add(parseValue(value));
+                }
+            }
+            data.add(row);
+        }
+        return data;
+    }
+    
+    // Fonction utilitaire pour convertir une valeur en type approprié
+    private static Object parseValue(String value) {
+        try {
+            if (value.matches("-?\\d+\\.\\d+")) {
+                return Double.parseDouble(value);
+            } else if (value.matches("-?\\d+")) {
+                return Integer.parseInt(value);
+            }
+        } catch (NumberFormatException ignored) {}
+        return value; // Retourne la chaîne si aucune conversion n'est possible
+    }
+    
+
+
 
     public static Relation triage(Relation initial, String Attribut_name, String type) 
     {
@@ -101,6 +223,7 @@ public class Function {
         }
     }
 
+    //SUM(Attribute)
     public static Relation getSum(Relation initial, String attribut_name) {
         Relation sum = new Relation();
 
@@ -133,13 +256,22 @@ public class Function {
         return sum;
     }
 
+    //AVG(Attribute)
     public static Relation getAvg(Relation initial, String attribut_name) {
         Relation avg = new Relation();
+
+        System.out.println("Average: " + attribut_name);
 
         try {
 
             String attribute = extractAttribute(attribut_name);
+
+            System.out.println("Extacting attribute: " + attribute);
+
             int index = initial.getAttributs_relations().indexOf(attribute);
+            
+            System.out.println("Extacting attribute: " + index);
+
             double somme = 0;
             double average = 0;
             for (int i = 0; i < initial.getNupl().size(); i++) {
@@ -167,6 +299,7 @@ public class Function {
         return avg;
     }
 
+    //MIN(Attribute) MAX(Attribute) 
     public static Relation getMinOrMax (Relation initial, String attribut_name) {
         Relation minOrMax = new Relation();
         

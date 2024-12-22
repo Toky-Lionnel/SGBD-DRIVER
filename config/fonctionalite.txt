@@ -1,0 +1,51 @@
+1- Creer table 
+
+-> CREATE TABLE Table_name (Attribute1 Attribute1_type Limite1, Attribute2 Attribute2_type Limite2)
+
+2- insertion 
+
+-> INSERT INTO Table_name (Attribute1, Attribute2) VALUES (Value1, Values2)
+
+3- Supprimer une table 
+
+-> DROP TABLE test2
+
+4- Voir les informations de chaque attribut d'une table
+
+-> DESCRIBE test1
+
+5- Selection avec ou sans condition
+
+-> SELECT * FROM Table_name
+-> SELECT * FROM Table_name WHERE condition1 AND condition2
+
+exemple de condition : attribut "= ou > ou != ou ..." condition
+    -> NOM = Algo ou ID = 2
+
+6- Jointure 
+
+-> SELECT * FROM Table_name1 CROSS JOIN Table_name2
+-> SELECT * FROM Table_name1 JOIN Table_name2
+-> SELECT * FROM Table_name1 INNER JOIN Table_name2 ON Table_name1.Attribute != Table_name2.Attribute
+
+7- Selection un attribute unique
+
+-> SELECT Attribute1 Attribute2 FROM Table_name
+-> SELECT Attribute1 Attribute2 FROM Table_name WHERE condition1 AND condition2
+-> SELECT Attribute1 FROM Table_name1 CROSS JOIN Table_name2
+
+8- Effacer une ligne ou plusieur ligne de la table
+
+-> DELETE FROM test2
+-> DELETE FROM test2 WHERE ID = 10
+
+9- Mettre  à jour une ligne de la table
+
+-> UPDATE test2 SET ID = 10 WHERE ID = 1
+
+10- Calculer une attribut numerique de la table
+
+-> SELECT MIN(id) FROM test2
+-> SELECT MAX(id) FROM test2
+-> SELECT AVG(id) FROM test2
+-> SELECT SUM(id) FROM test2

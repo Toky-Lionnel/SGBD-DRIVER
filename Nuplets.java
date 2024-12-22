@@ -7,6 +7,10 @@ public class Nuplets
     private ArrayList <Attribut> attributs;
     private ArrayList <Object> valeurs;
 
+    public Nuplets (ArrayList <Object> valeurs)
+    {
+        setValeurs(valeurs);
+    }
 
     public Nuplets(ArrayList<Attribut> attributs, ArrayList<Object> valeurs) throws Exception
     {

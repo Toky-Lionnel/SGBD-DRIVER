@@ -1,0 +1,4 @@
+ID Integer 255
+NOM String 255
+DUREE Integer 100
+ENSEIGNANT_ID Integer 255
